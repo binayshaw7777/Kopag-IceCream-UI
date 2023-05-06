@@ -30,7 +30,6 @@ import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -62,6 +61,7 @@ import com.geekymusketeers.kopag_icecream_ui.model.Categories
 import com.geekymusketeers.kopag_icecream_ui.model.Chips
 import com.geekymusketeers.kopag_icecream_ui.model.Items
 import com.geekymusketeers.kopag_icecream_ui.ui.theme.KopagIcecreamUITheme
+import com.geekymusketeers.kopag_icecream_ui.ui.theme.LightGray
 import com.geekymusketeers.kopag_icecream_ui.ui.theme.MidBlue
 import com.geekymusketeers.kopag_icecream_ui.ui.theme.Purple80
 import com.geekymusketeers.kopag_icecream_ui.ui.theme.RegularFont
@@ -90,19 +90,20 @@ fun MainPreview() {
     }
 
     val category = getAllCategories()
-    var selected by remember { mutableStateOf("All") }
+    val selected by remember { mutableStateOf(category[0]) }
 
     val mContext = LocalContext.current
     Surface(
         modifier = Modifier
             .fillMaxSize()
-            .padding(20.dp),
-        color = MaterialTheme.colorScheme.background
+            .background(White),
+        color = White
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(White),
+                .background(White)
+                .padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AppBar(
@@ -123,8 +124,8 @@ fun MainPreview() {
                 modifier = Modifier.padding(top = 20.dp)
             ) {
                 items(category) {
-                    Chips(title = it.name, selected = it.name == selected) { data ->
-                        selected = data
+                    Chips(title = it.name, selected = it.name == selected.name) { data ->
+                        selected.name = data
                     }
                 }
             }
@@ -326,41 +327,34 @@ fun SearchBar(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-
-    Box(
-        modifier = modifier
+    TextField(
+        value = value,
+        modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(60.dp))
-            .background(Transparent)
-    ) {
-        TextField(
-            value = value,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(0.dp, 60.dp, 60.dp, 0.dp))
-                .background(Transparent),
-            onValueChange = { onValueChange(it) },
-            placeholder = {
-                Text(
-                    text = "Search", style = TextStyle(
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.W500,
-                        color = Gray,
-                        fontFamily = RegularFont
-                    )
+            .clip(RoundedCornerShape(0.dp, 60.dp, 60.dp, 0.dp))
+            .background(Transparent),
+        onValueChange = { onValueChange(it) },
+        placeholder = {
+            Text(
+                text = "Search", style = TextStyle(
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.W500,
+                    color = Gray,
+                    fontFamily = RegularFont
                 )
-            },
-            colors = TextFieldDefaults.textFieldColors(
-                focusedIndicatorColor = Transparent,
-                unfocusedIndicatorColor = Transparent
-            ),
-            leadingIcon = {
-                AppIcon(icon = R.drawable.search, background = Transparent, tint = Black)
-            },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-        )
-    }
+            )
+        },
+        colors = TextFieldDefaults.textFieldColors(
+            focusedIndicatorColor = Transparent,
+            unfocusedIndicatorColor = Transparent,
+            containerColor = LightGray
+        ),
+        leadingIcon = {
+            AppIcon(icon = R.drawable.search, background = Transparent, tint = Black)
+        },
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+    )
 }
 
 
