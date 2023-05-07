@@ -1,4 +1,4 @@
-package com.geekymusketeers.kopag_icecream_ui
+package com.geekymusketeers.kopag_icecream_ui.ui.screens
 
 import android.os.Bundle
 import android.widget.Toast
@@ -25,8 +25,6 @@ import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -55,6 +53,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
+import com.geekymusketeers.kopag_icecream_ui.R
 import com.geekymusketeers.kopag_icecream_ui.common.AppBar
 import com.geekymusketeers.kopag_icecream_ui.common.AppIcon
 import com.geekymusketeers.kopag_icecream_ui.model.Categories
@@ -90,14 +89,14 @@ fun MainPreview() {
     }
 
     val category = getAllCategories()
-    val selected by remember { mutableStateOf(category[0]) }
+    var selected by remember { mutableStateOf(category[0].name) }
 
     val mContext = LocalContext.current
     Surface(
         modifier = Modifier
             .fillMaxSize()
             .background(White),
-        color = White
+        color = White,
     ) {
         Column(
             modifier = Modifier
@@ -108,7 +107,7 @@ fun MainPreview() {
         ) {
             AppBar(
                 title = "Kopag",
-                trailingIcon = Icons.Filled.ShoppingCart,
+                trailingIcon = R.drawable.shopping_bag_icon,
                 trailingIconOnClick = {
                     Toast.makeText(mContext, "Cart clicked", Toast.LENGTH_SHORT).show()
                 })
@@ -124,8 +123,8 @@ fun MainPreview() {
                 modifier = Modifier.padding(top = 20.dp)
             ) {
                 items(category) {
-                    Chips(title = it.name, selected = it.name == selected.name) { data ->
-                        selected.name = data
+                    Chips(title = it.name, selected = it.name == selected) { data ->
+                        selected = data
                     }
                 }
             }
@@ -151,6 +150,7 @@ fun MainPreview() {
         }
     }
 }
+
 
 @Composable
 fun ItemList(items: List<Items>) {
@@ -350,7 +350,7 @@ fun SearchBar(
             containerColor = LightGray
         ),
         leadingIcon = {
-            AppIcon(icon = R.drawable.search, background = Transparent, tint = Black)
+            AppIcon(icon = R.drawable.search_icon, background = Transparent, tint = Black)
         },
         singleLine = true,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),

@@ -25,8 +25,6 @@ fun AppIcon(
 ) {
     Box(
         modifier = modifier
-            .size(46.dp)
-            .clip(CircleShape)
             .background(background)
             .clickable { onClick() }
         ,
@@ -36,7 +34,7 @@ fun AppIcon(
             painter = painterResource(id = icon),
             contentDescription ="",
             tint = tint,
-            modifier = Modifier.size(20.dp)
+            modifier = modifier
         )
     }
 }
