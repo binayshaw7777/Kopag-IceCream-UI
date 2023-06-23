@@ -1,10 +1,17 @@
 package com.geekymusketeers.kopag_icecream_ui.ui.screens
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,15 +42,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import com.geekymusketeers.kopag_icecream_ui.R
 import com.geekymusketeers.kopag_icecream_ui.common.RoundedIconButton
 import com.geekymusketeers.kopag_icecream_ui.model.Chips
+import com.geekymusketeers.kopag_icecream_ui.model.Items
 import com.geekymusketeers.kopag_icecream_ui.ui.screens.ui.theme.KopagIcecreamUITheme
 import com.geekymusketeers.kopag_icecream_ui.ui.theme.MidBlue
 import com.geekymusketeers.kopag_icecream_ui.ui.theme.RegularFont
 import com.geekymusketeers.kopag_icecream_ui.ui.theme.SemiBoldFont
 
 class PreviewScreen : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -55,6 +65,14 @@ class PreviewScreen : ComponentActivity() {
     }
 }
 
+
+fun Context.findActivity(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
+}
+
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun PreviewProduct() {
 
@@ -63,9 +81,16 @@ fun PreviewProduct() {
     var selectedIceLevel by remember { mutableStateOf("30%") }
     var selectedSugarLevel by remember { mutableStateOf("30%") }
 
+    val activity = mContext.findActivity()
+    val intent = activity?.intent
+
+    val selectedItem = intent?.getParcelableExtra<Items>("currentItem")
+
     Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White),
+        color = Color.White
     ) {
         Column(
             modifier = Modifier
@@ -76,23 +101,27 @@ fun PreviewProduct() {
                     .fillMaxWidth()
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.butterscotch_preview),
-                    contentDescription = "Butter Scotch",
+                    painter = if (selectedItem != null)
+                        rememberAsyncImagePainter(selectedItem.image)
+                    else painterResource(
+                        id = R.drawable.butterscotch_preview
+                    ),
+                    contentDescription = selectedItem?.name,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(250.dp),
                     contentScale = ContentScale.Crop
                 )
                 RoundedIconButton(
-                    asset = R.drawable.back_icon,
-                    parentModifier = Modifier
+                    modifier = Modifier
                         .padding(24.dp)
                         .clip(CircleShape)
                         .size(50.dp),
+                    asset = R.drawable.back_icon,
                     iconSize = 10,
                     background = Color.White,
                     onClick = {
-                        Toast.makeText(mContext, "Back", Toast.LENGTH_SHORT).show()
+                        activity?.finish()
                     }
                 )
             }
@@ -103,7 +132,7 @@ fun PreviewProduct() {
                     .padding(20.dp)
             ) {
                 Text(
-                    text = "Caramel Coffee Jelly Frappuccino",
+                    text = selectedItem?.name ?: "No data",
                     fontFamily = SemiBoldFont,
                     fontSize = 20.sp
                 )
@@ -114,18 +143,19 @@ fun PreviewProduct() {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "Rs. 250",
+                        text = "Rs: ${selectedItem?.price}",
                         fontFamily = SemiBoldFont,
                         color = MidBlue
                     )
                     Text(
-                        text = "Stock: 10",
+                        text = "Stock: ${selectedItem?.stock}",
                         fontFamily = RegularFont,
                         color = Color.LightGray
                     )
                 }
                 Spacer(modifier = Modifier.height(20.dp))
-                Text(text = "Cup Size",
+                Text(
+                    text = "Cup Size",
                     fontFamily = SemiBoldFont,
                     fontSize = 16.sp
                 )
@@ -142,7 +172,8 @@ fun PreviewProduct() {
                     }
                 }
                 Spacer(modifier = Modifier.height(20.dp))
-                Text(text = "Ice Level",
+                Text(
+                    text = "Ice Level",
                     fontFamily = SemiBoldFont,
                     fontSize = 16.sp
                 )
@@ -159,7 +190,8 @@ fun PreviewProduct() {
                     }
                 }
                 Spacer(modifier = Modifier.height(20.dp))
-                Text(text = "Sugar Level",
+                Text(
+                    text = "Sugar Level",
                     fontFamily = SemiBoldFont,
                     fontSize = 16.sp
                 )
@@ -176,7 +208,8 @@ fun PreviewProduct() {
                     }
                 }
                 Spacer(modifier = Modifier.height(20.dp))
-                Text(text = "Note",
+                Text(
+                    text = "Note",
                     fontFamily = SemiBoldFont,
                     fontSize = 16.sp
                 )
@@ -202,6 +235,7 @@ fun getAllLevels(): List<String> {
 }
 
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Preview(showBackground = true)
 @Composable
 fun PreviewProductPreview() {
