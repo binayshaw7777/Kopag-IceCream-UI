@@ -36,7 +36,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -52,6 +54,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -92,8 +95,10 @@ fun MainPreview() {
         mutableStateOf("")
     }
 
+    val filteredItems = remember { mutableStateListOf<Items>() }
     val category = getAllCategories()
     var selected by remember { mutableStateOf(category[0].name) }
+    val allItems = ItemsGenerator.getAllItems()
 
     val mContext = LocalContext.current
     Surface(
@@ -150,11 +155,23 @@ fun MainPreview() {
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
-            ItemList(items = ItemsGenerator.getAllItems()) {
+            ItemList(items = filteredItems) {
                 val intent = Intent(mContext, PreviewScreen::class.java)
                 intent.putExtra("currentItem", it)
                 mContext.startActivity(intent)
             }
+        }
+
+        // Update the filteredItems list whenever the search query changes
+        LaunchedEffect(search) {
+            filteredItems.clear()
+            if (search.isEmpty().not()) {
+                allItems.forEach { item ->
+                    if (item.name.contains(search, ignoreCase = true)) {
+                        filteredItems.add(item)
+                    }
+                }
+            } else filteredItems.addAll(allItems)
         }
     }
 }
