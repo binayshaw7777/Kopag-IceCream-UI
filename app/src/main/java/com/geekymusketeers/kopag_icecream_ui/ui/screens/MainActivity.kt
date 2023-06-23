@@ -1,6 +1,5 @@
 package com.geekymusketeers.kopag_icecream_ui.ui.screens
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -54,7 +53,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -62,7 +60,6 @@ import coil.compose.rememberAsyncImagePainter
 import com.geekymusketeers.kopag_icecream_ui.R
 import com.geekymusketeers.kopag_icecream_ui.common.AppBar
 import com.geekymusketeers.kopag_icecream_ui.common.AppIcon
-import com.geekymusketeers.kopag_icecream_ui.model.Categories
 import com.geekymusketeers.kopag_icecream_ui.model.Chips
 import com.geekymusketeers.kopag_icecream_ui.model.Items
 import com.geekymusketeers.kopag_icecream_ui.ui.theme.KopagIcecreamUITheme
@@ -73,6 +70,7 @@ import com.geekymusketeers.kopag_icecream_ui.ui.theme.RegularFont
 import com.geekymusketeers.kopag_icecream_ui.ui.theme.SemiBoldFont
 import com.geekymusketeers.kopag_icecream_ui.ui.theme.UltraLightGray
 import com.geekymusketeers.kopag_icecream_ui.utils.ItemsGenerator
+import com.geekymusketeers.kopag_icecream_ui.utils.Logger
 
 class MainActivity : ComponentActivity() {
 
@@ -95,10 +93,11 @@ fun MainPreview() {
         mutableStateOf("")
     }
 
-    val filteredItems = remember { mutableStateListOf<Items>() }
-    val category = getAllCategories()
+    val category = ItemsGenerator.getAllCategories()
     var selected by remember { mutableStateOf(category[0].name) }
     val allItems = ItemsGenerator.getAllItems()
+    val filteredItems = remember { mutableStateListOf<Items>() }
+    filteredItems.addAll(allItems)
 
     val mContext = LocalContext.current
     Surface(
@@ -163,7 +162,7 @@ fun MainPreview() {
         }
 
         // Update the filteredItems list whenever the search query changes
-        LaunchedEffect(search) {
+        LaunchedEffect(search, selected) {
             filteredItems.clear()
             if (search.isEmpty().not()) {
                 allItems.forEach { item ->
@@ -171,7 +170,15 @@ fun MainPreview() {
                         filteredItems.add(item)
                     }
                 }
-            } else filteredItems.addAll(allItems)
+            } else if ((selected == "🍘 All").not()) {
+                allItems.forEach { item ->
+                    Logger.debugLog("Item Category: ${item.category} and ${selected.substring(2)}")
+                    if (item.category == selected.substring(3)) {
+                        filteredItems.add(item)
+                    }
+                }
+            }
+            else filteredItems.addAll(allItems)
         }
     }
 }
@@ -249,20 +256,7 @@ fun ItemList(items: List<Items>, gotoPreviewScreen: (Items) -> Unit) {
 }
 
 
-fun getAllCategories(): List<Categories> {
-    return listOf(
-        Categories(0, "🍘 All"),
-        Categories(1, "🍦 Ice Cream"),
-        Categories(2, "🍰 Cakes"),
-        Categories(3, "🍪 Cookies"),
-        Categories(4, "🧁 Cupcakes"),
-        Categories(5, "🍩 Doughnuts"),
-        Categories(6, "🥧 Pies"),
-        Categories(7, "🍮 Puddings"),
-        Categories(8, "🍡 Sweets"),
-        Categories(9, "🧇 Waffles")
-    )
-}
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
