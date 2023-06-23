@@ -43,6 +43,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.Gray
@@ -125,7 +126,7 @@ fun MainPreview() {
                     .clip(RoundedCornerShape(60.dp))
                     .background(Purple80)
             ) {
-                SearchBar(value = search, onValueChange = { search = it })
+                SearchBar(value = search, onValueChange = { search = it }, { search = "" })
             }
             LazyRow(
                 modifier = Modifier.padding(top = 20.dp)
@@ -177,8 +178,7 @@ fun MainPreview() {
                         filteredItems.add(item)
                     }
                 }
-            }
-            else filteredItems.addAll(allItems)
+            } else filteredItems.addAll(allItems)
         }
     }
 }
@@ -256,22 +256,27 @@ fun ItemList(items: List<Items>, gotoPreviewScreen: (Items) -> Unit) {
 }
 
 
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBar(
     value: String,
     onValueChange: (String) -> Unit,
+    onClearText: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
+
+    val showClearIcon = remember { mutableStateOf(false) }
+
     TextField(
         value = value,
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(0.dp, 60.dp, 60.dp, 0.dp))
             .background(Transparent),
-        onValueChange = { onValueChange(it) },
+        onValueChange = {
+            showClearIcon.value = it.isNotEmpty()
+            onValueChange(it)
+        },
         placeholder = {
             Text(
                 text = "Search", style = TextStyle(
@@ -288,7 +293,18 @@ fun SearchBar(
             containerColor = LightGray
         ),
         leadingIcon = {
-            AppIcon(icon = R.drawable.search_icon, background = Transparent, tint = Black)
+            AppIcon(icon = R.drawable.search_icon, background = Transparent, tint = Gray)
+        },
+        trailingIcon = {
+            if (showClearIcon.value) {
+                AppIcon(
+                    modifier = modifier
+                        .clickable {
+                            onClearText(true)
+                            showClearIcon.value = false
+                        }, icon = R.drawable.close_icon, background = Transparent, tint = Gray
+                )
+            }
         },
         singleLine = true,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
