@@ -26,14 +26,10 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -43,28 +39,24 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color.Companion.Black
-import androidx.compose.ui.graphics.Color.Companion.Gray
 import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.geekymusketeers.kopag_icecream_ui.R
 import com.geekymusketeers.kopag_icecream_ui.common.AppBar
-import com.geekymusketeers.kopag_icecream_ui.common.AppIcon
+import com.geekymusketeers.kopag_icecream_ui.common.SearchBar
 import com.geekymusketeers.kopag_icecream_ui.model.Chips
 import com.geekymusketeers.kopag_icecream_ui.model.Items
 import com.geekymusketeers.kopag_icecream_ui.ui.theme.KopagIcecreamUITheme
-import com.geekymusketeers.kopag_icecream_ui.ui.theme.LightGray
 import com.geekymusketeers.kopag_icecream_ui.ui.theme.MidBlue
 import com.geekymusketeers.kopag_icecream_ui.ui.theme.Purple80
 import com.geekymusketeers.kopag_icecream_ui.ui.theme.RegularFont
@@ -253,62 +245,6 @@ fun ItemList(items: List<Items>, gotoPreviewScreen: (Items) -> Unit) {
             }
         }
     }
-}
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SearchBar(
-    value: String,
-    onValueChange: (String) -> Unit,
-    onClearText: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
-) {
-
-    val showClearIcon = remember { mutableStateOf(false) }
-
-    TextField(
-        value = value,
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(0.dp, 60.dp, 60.dp, 0.dp))
-            .background(Transparent),
-        onValueChange = {
-            showClearIcon.value = it.isNotEmpty()
-            onValueChange(it)
-        },
-        placeholder = {
-            Text(
-                text = "Search", style = TextStyle(
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.W500,
-                    color = Gray,
-                    fontFamily = RegularFont
-                )
-            )
-        },
-        colors = TextFieldDefaults.textFieldColors(
-            focusedIndicatorColor = Transparent,
-            unfocusedIndicatorColor = Transparent,
-            containerColor = LightGray
-        ),
-        leadingIcon = {
-            AppIcon(icon = R.drawable.search_icon, background = Transparent, tint = Gray)
-        },
-        trailingIcon = {
-            if (showClearIcon.value) {
-                AppIcon(
-                    modifier = modifier
-                        .clickable {
-                            onClearText(true)
-                            showClearIcon.value = false
-                        }, icon = R.drawable.close_icon, background = Transparent, tint = Gray
-                )
-            }
-        },
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-    )
 }
 
 
