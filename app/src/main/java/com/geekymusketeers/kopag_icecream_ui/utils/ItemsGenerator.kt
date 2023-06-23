@@ -1,5 +1,6 @@
 package com.geekymusketeers.kopag_icecream_ui.utils
 
+import com.geekymusketeers.kopag_icecream_ui.model.Categories
 import com.geekymusketeers.kopag_icecream_ui.model.Items
 
 
@@ -87,6 +88,21 @@ object ItemsGenerator {
                 "Ice Cream",
                 21
             )
+        )
+    }
+
+    fun getAllCategories(): List<Categories> {
+        return listOf(
+            Categories(0, "🍘 All"),
+            Categories(1, "🍦 Ice Cream"),
+            Categories(2, "🍰 Cake"),
+            Categories(3, "🍪 Cookies"),
+            Categories(4, "🧁 Cupcake"),
+            Categories(5, "🍩 Doughnut"),
+            Categories(6, "🥧 Pie"),
+            Categories(7, "🍮 Pudding"),
+            Categories(8, "🍡 Sweet"),
+            Categories(9, "🧇 Waffle")
         )
     }
 
