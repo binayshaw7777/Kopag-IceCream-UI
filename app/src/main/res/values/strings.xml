@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">Kopag-Icecream-UI</string>
     <string name="title_activity_preview_screen">PreviewScreen</string>
+    <string name="cup_size">Cup Size</string>
+    <string name="no_data">No data</string>
+    <string name="sugar_level">Sugar Level</string>
+    <string name="note">Note</string>
+    <string name="ice_level">Ice Level</string>
+    <string name="decrement">Decrement</string>
+    <string name="increment">Increment</string>
 </resources>

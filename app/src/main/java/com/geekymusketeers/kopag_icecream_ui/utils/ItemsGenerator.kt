@@ -106,4 +106,20 @@ object ItemsGenerator {
         )
     }
 
+    fun getAllCupSizes(): List<String> {
+        return listOf(
+            "Small",
+            "Medium",
+            "Large"
+        )
+    }
+
+    fun getAllLevels(): List<String> {
+        return listOf(
+            "30%",
+            "60%",
+            "100%"
+        )
+    }
+
 }
